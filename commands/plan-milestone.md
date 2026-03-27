@@ -2,12 +2,23 @@
 
 You are entering **milestone planning mode**. Follow this protocol exactly. Do not skip steps.
 
+## Context (pre-computed at invocation)
+
+```
+Branch:          $(git branch --show-current 2>/dev/null || echo "unknown")
+Uncommitted:     $(git status --short 2>/dev/null | head -10 || echo "none")
+Milestone docs:  $(ls ai/PLAN-M*.md 2>/dev/null | sort -V | tr '\n' '  ' || echo "none yet")
+Recent commits:  $(git log --oneline -5 2>/dev/null || echo "no commits")
+```
+
+Use this snapshot to orient immediately — do not re-read git status manually.
+
 ## Step 1 — Orient (read before anything else)
 
 Read in this order:
 1. `ai/PLAN.md` — master milestone list and project vision
 2. `ai/ROADMAP.md` — next milestones with scope, rationale, dependencies, and estimated effort (if it exists)
-3. All existing `ai/PLAN-M{k}.md` files (prior milestone documents)
+3. All existing `ai/PLAN-M{k}.md` files listed above (prior milestone documents)
 4. `ai/ARCHITECTURE.md` — current architecture and invariants
 5. `ai/LEARNINGS.md` — hard-won lessons. Violations of these are bugs in your plan.
 6. `CLAUDE.md` — project constraints and non-negotiables

@@ -68,14 +68,48 @@ Immediately plan the infrastructure milestone:
 
 Use `/plan-milestone` for the full planning protocol.
 
-## Step 6 — Confirm and commit
+## Step 6 — Set up formatting hook
+
+Recommend the user configure a PostToolUse hook to auto-format code after every file write. This catches the last 10% of formatting issues before CI does. Ask what language/formatter applies:
+
+| Stack | Formatter command |
+|-------|------------------|
+| Python | `ruff format {file}` or `black {file}` |
+| TypeScript/JS | `prettier --write {file}` |
+| Go | `gofmt -w {file}` |
+| Rust | `rustfmt {file}` |
+
+Add to `.claude/settings.json` (project-level, check into git):
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "<formatter> \"$CLAUDE_TOOL_OUTPUT_FILE\""
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Skip this step if no formatter is available or the project has no consistent style tooling.
+
+## Step 7 — Confirm and commit
 
 Present the full file structure to the user. Ask:
 1. Does the CLAUDE.md description match your intent exactly?
 2. Are the non-negotiable architectural decisions correct?
 3. Any milestones obviously missing from the PLAN.md table?
+4. Does the formatter hook look right for your stack?
 
-After approval: ensure `.gitignore` exists, make initial commit with all `ai/` and `CLAUDE.md` files.
+After approval: ensure `.gitignore` exists, make initial commit with all `ai/`, `CLAUDE.md`, and `.claude/settings.json` files.
 
 ---
 
