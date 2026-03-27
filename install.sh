@@ -23,12 +23,24 @@ mkdir -p "$COMMANDS_DIR" "$CACHE_DIR"
 
 # ── 2. Skill files ────────────────────────────────────────────────────────────
 for skill in new-project plan-milestone execute-milestone; do
-  curl -sL "${BASE_URL}/commands/${skill}.md" > "${COMMANDS_DIR}/${skill}.md"
+  tmp="${COMMANDS_DIR}/${skill}.md.tmp"
+  http_code=$(curl -sL --max-time 15 --max-redirs 3 -w "%{http_code}" -o "$tmp" "${BASE_URL}/commands/${skill}.md" 2>/dev/null)
+  if [ "$http_code" != "200" ] || [ "$(wc -c < "$tmp")" -lt 200 ]; then
+    echo "  [error] Failed to download ${skill}.md (HTTP ${http_code}) — aborting"
+    rm -f "$tmp"; exit 1
+  fi
+  mv "$tmp" "${COMMANDS_DIR}/${skill}.md"
   echo "  [ok] commands/${skill}.md"
 done
 
 # ── 3. Update script ──────────────────────────────────────────────────────────
-curl -sL "${BASE_URL}/update-skills.sh" > "${CLAUDE_DIR}/update-skills.sh"
+tmp="${CLAUDE_DIR}/update-skills.sh.tmp"
+http_code=$(curl -sL --max-time 15 --max-redirs 3 -w "%{http_code}" -o "$tmp" "${BASE_URL}/update-skills.sh" 2>/dev/null)
+if [ "$http_code" != "200" ] || [ "$(wc -c < "$tmp")" -lt 100 ]; then
+  echo "  [error] Failed to download update-skills.sh (HTTP ${http_code}) — aborting"
+  rm -f "$tmp"; exit 1
+fi
+mv "$tmp" "${CLAUDE_DIR}/update-skills.sh"
 chmod +x "${CLAUDE_DIR}/update-skills.sh"
 echo "  [ok] update-skills.sh"
 
