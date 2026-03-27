@@ -28,13 +28,16 @@ Plus a `templates/` directory with the standard project file structure:
 ## Install (one-time, per machine)
 
 ```bash
-mkdir -p ~/.claude/commands && \
-curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/commands/new-project.md > ~/.claude/commands/new-project.md && \
-curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/commands/plan-milestone.md > ~/.claude/commands/plan-milestone.md && \
-curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/commands/execute-milestone.md > ~/.claude/commands/execute-milestone.md
+bash <(curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/install.sh)
 ```
 
-Requires: [Claude Code](https://claude.ai/code) installed.
+What it does:
+- Downloads `/new-project`, `/plan-milestone`, `/execute-milestone` into `~/.claude/commands/`
+- Downloads `update-skills.sh` into `~/.claude/`
+- Adds a `Stop` hook to `~/.claude/settings.json` so skills auto-update daily in the background
+- Seeds the ETag cache so the first auto-update check is instant
+
+Requires: [Claude Code](https://claude.ai/code) + Python 3.6+ (for settings.json merge).
 
 ---
 
