@@ -8,13 +8,15 @@ Derived from the ALLEX pipeline build (Repuro, March 2026). Combines patterns fr
 
 ## What this is
 
-Three Claude Code slash commands that encode a complete project methodology:
+Five Claude Code slash commands — three for the core milestone loop, two for quality enforcement:
 
 | Command | When to use |
 |---------|------------|
 | `/new-project` | Starting a new project — scaffolds all documentation files and fetches templates |
 | `/plan-milestone` | Planning a specific milestone — full research, clarification, and decision-complete plan |
-| `/execute-milestone` | Executing an approved plan — implementation, validation, documentation update |
+| `/execute-milestone` | Executing an approved plan — implementation, validation, simplification, documentation update |
+| `/audit-security` | Security review — OWASP top 10 check on changed files or full codebase, with fix protocol |
+| `/write-tests` | Test generation — fills coverage gaps for existing code, follows project test patterns |
 
 Plus a `templates/` directory with the standard project file structure:
 - `CLAUDE.md` — AI instruction file (always loaded)
@@ -108,3 +110,4 @@ project-root/
 
 - [ljw1004/oneplay](https://github.com/ljw1004/oneplay) — `AGENTS.md` + `LEARNINGS.md` + milestone planning protocol
 - ALLEX (Repuro lead pipeline) — production lessons from a 15-milestone AI-assisted build
+- Boris Cherney (Claude Code) — inline bash context injection, pre-defined verification, PostToolUse formatting hooks
