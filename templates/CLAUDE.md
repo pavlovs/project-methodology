@@ -102,5 +102,6 @@ A milestone is NOT complete until:
 2. `pytest tests/` passes
 3. CLI command ran live (`--limit 5`) against real data
 4. Status command shows expected counts
-5. If schema, output format, or prompt changed: docs updated in same commit
-6. One commit per milestone — no batch commits
+5. PM Review section in `PLAN-M{n}.md` shows PASS (original or post-amendment)
+6. If schema, output format, or prompt changed: docs updated in same commit
+7. One commit per milestone — no batch commits

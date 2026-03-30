@@ -67,7 +67,19 @@ Update the **AI validation results** section of `ai/PLAN-M{n}.md` with:
 - Exact outputs (counts, file names, any errors)
 - Any deviations from the plan and why
 
-## Step 6 — Better engineering phase
+This must be done before PM Review — the PM reads this section to understand what was actually built.
+
+## Step 6 — PM Review
+
+Run `/review-milestone` now. This is non-negotiable — do not skip it.
+
+The PM review runs after validation results are documented, before commit. It checks the milestone from a commercial and user perspective, not a developer perspective. Follow the full `/review-milestone` protocol:
+- REQUIRED issues (high conviction): fix autonomously, document in `ai/PLAN-M{n}.md`, re-test
+- CLARIFY issues (low conviction): batch questions to the project owner, wait for answers before acting
+
+Only proceed to Step 7 once the PM review verdict is PASS (either originally or after amendments).
+
+## Step 7 — Better engineering phase
 
 After verification passes, do the following before committing:
 
@@ -75,9 +87,20 @@ After verification passes, do the following before committing:
 Invoke the `/simplify` subagent on the files changed in this milestone. Accept any improvements that don't change external behavior. This runs after verification (code is confirmed working) and before commit (so simplifications are included in the milestone commit).
 
 **(b) Update `ai/LEARNINGS.md`**
-- Add any new durable lessons (things that would cost a future developer time if unknown)
-- Remove anything that's now better documented in code or architecture
-- Follow the scope ladder: repo-wide wisdom → LEARNINGS.md; app-specific policy → ARCHITECTURE.md; symbol-local → code comments
+Hard limit: **25 lines of content**. This file is loaded into every session — token cost is real.
+
+What belongs here: things not derivable from reading the code, that would cost a developer 30+ minutes to rediscover. One sentence per lesson, plus one sentence fix.
+
+What does NOT belong here:
+
+| Content | Where it belongs |
+|---------|-----------------|
+| Invariants that must never be violated | `CLAUDE.md` non-negotiables |
+| Data flow, schema, component contracts | `ai/ARCHITECTURE.md` |
+| Process rules, behavioral feedback | memory (`feedback_*.md`) |
+| Things obvious from reading the code | Delete — don't write them |
+
+At every milestone: **add new lessons AND prune stale ones**. If a lesson is now in the code or architecture docs, delete it here. The file should shrink as the project matures — that is a sign of good engineering, not neglect.
 
 **(c) Update `ai/ARCHITECTURE.md`**
 - Reflect any architectural decisions made or changed during this milestone
@@ -96,22 +119,24 @@ Invoke the `/simplify` subagent on the files changed in this milestone. Accept a
 - [ ] `pytest tests/` passes
 - [ ] Output files valid (no corrupt Excel, empty HTML, broken JSON)
 - [ ] `PLAN-M{n}.md` AI validation results section filled
+- [ ] `PLAN-M{n}.md` PM Review section filled (PASS or CONDITIONAL PASS resolved)
 - [ ] `ARCHITECTURE.md` / `LEARNINGS.md` updated if any design decision changed
 - [ ] `ROADMAP.md` current state block updated
 - [ ] `/simplify` run on changed files
 
-## Step 7 — Commit
+## Step 8 — Commit
 
-Stage and commit: implementation files + tests + plan file (with results) + updated docs.
+Stage and commit: implementation files + tests + plan file (with results + PM review) + updated docs.
 One commit per milestone. Do not batch with other milestones.
 
-## Step 8 — Present to user
+## Step 9 — Present to user
 
 Tell the user:
 1. What was built (1–2 sentences)
 2. The verification results (counts, test output)
-3. Any deviations from the plan
-4. What to try (exact commands/steps for manual verification)
-5. What the next milestone is
+3. PM review verdict — PASS or what was amended
+4. Any deviations from the original plan
+5. What to try (exact commands/steps for manual verification)
+6. What the next milestone is
 
 Mark the milestone ✅ in `ai/PLAN.md` only after all checklist items above are confirmed true.

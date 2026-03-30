@@ -26,9 +26,10 @@ curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/temp
 curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/ARCHITECTURE.md > ai/ARCHITECTURE.md
 curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/DESIGN.md > ai/DESIGN.md
 curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/LEARNINGS.md > ai/LEARNINGS.md
+curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/ROADMAP.md > ai/ROADMAP.md
 ```
 
-Verify all 6 files exist and are non-empty before proceeding.
+Verify all 7 files exist and are non-empty before proceeding.
 
 ## Step 3 — Customize every file
 
@@ -127,3 +128,4 @@ Non-negotiable defaults derived from the ALLEX build (Repuro, March 2026):
 8. **Free steps before paid steps.** Keyword pre-filters before AI calls. Cache before API. Cost is a first-class constraint.
 9. **`ai/LEARNINGS.md` is a living document.** Every session that uncovers a new lesson ends with an update.
 10. **Commit immediately after every meaningful change.** Background sync scripts can wipe stash silently.
+11. **PM Review is a hard gate after every milestone.** Run `/review-milestone` after tests pass. REQUIRED issues (high conviction) are fixed autonomously with documentation. CLARIFY issues are batched to the owner before acting. A milestone is not done until the PM review shows PASS.

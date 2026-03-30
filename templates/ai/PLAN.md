@@ -38,8 +38,9 @@ A milestone is NOT complete and must NOT be marked ✅ until ALL of the followin
 2. `pytest tests/` passes — no regressions
 3. The primary command ran live (`--limit 5` minimum) against real data — not just mocked tests
 4. `python {entrypoint}.py status` (or equivalent) shows expected state counts
-5. If DB schema, output format, API behavior, or prompt logic changed: `ARCHITECTURE.md` updated in the same commit
-6. One commit covers implementation + tests + doc updates. Batch commits across milestones = planning was skipped.
+5. `PLAN-M{n}.md` PM Review section shows PASS (original or after amendments)
+6. If DB schema, output format, API behavior, or prompt logic changed: `ARCHITECTURE.md` updated in the same commit
+7. One commit covers implementation + tests + doc updates. Batch commits across milestones = planning was skipped.
 
 ---
 
@@ -64,10 +65,11 @@ Run `/execute-milestone` to invoke the full execution protocol. Summary:
 1. Read PLAN-M{n}.md, LEARNINGS.md, ARCHITECTURE.md, CLAUDE.md
 2. Implement following plan steps exactly; flag deviations
 3. Run all validation commands; record exact outputs in PLAN-M{n}.md
-4. Better engineering phase: update LEARNINGS.md + ARCHITECTURE.md
-5. Self-review checklist (type hints, dry-run, tests, output files, docs)
-6. One commit: implementation + tests + plan file + doc updates
-7. Mark ✅ in this file only after all checklist items confirmed true
+4. Run `/review-milestone` (PM Review — Opus): REQUIRED fixes auto-amended + documented; CLARIFY items batched to project owner
+5. Better engineering phase: update LEARNINGS.md + ARCHITECTURE.md
+6. Self-review checklist (type hints, dry-run, tests, output files, docs, PM review PASS)
+7. One commit: implementation + tests + plan file (with PM review) + doc updates
+8. Mark ✅ in this file only after all checklist items confirmed true
 
 ---
 

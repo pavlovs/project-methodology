@@ -8,13 +8,14 @@ Derived from the ALLEX pipeline build (Repuro, March 2026). Combines patterns fr
 
 ## What this is
 
-Five Claude Code slash commands — three for the core milestone loop, two for quality enforcement:
+Six Claude Code slash commands — three for the core milestone loop, one for PM quality review, two for code quality:
 
 | Command | When to use |
 |---------|------------|
 | `/new-project` | Starting a new project — scaffolds all documentation files and fetches templates |
 | `/plan-milestone` | Planning a specific milestone — full research, clarification, and decision-complete plan |
-| `/execute-milestone` | Executing an approved plan — implementation, validation, simplification, documentation update |
+| `/execute-milestone` | Executing an approved plan — implementation, validation, PM review gate, documentation update |
+| `/review-milestone` | PM review after tests pass — commercial/UX lens, two-tier verdict (auto-fix vs ask owner) |
 | `/audit-security` | Security review — OWASP top 10 check on changed files or full codebase, with fix protocol |
 | `/write-tests` | Test generation — fills coverage gaps for existing code, follows project test patterns |
 
@@ -24,6 +25,7 @@ Plus a `templates/` directory with the standard project file structure:
 - `ai/ARCHITECTURE.md` — system design and invariants
 - `ai/DESIGN.md` — product logic (classification rules, filters, output schema)
 - `ai/LEARNINGS.md` — durable engineering lessons (grows over time)
+- `ai/ROADMAP.md` — current state, next milestones, deferred items, open issues
 
 ---
 
@@ -61,13 +63,19 @@ Claude reads all project documentation, researches the codebase, asks clarifying
 ```
 /execute-milestone
 ```
-Claude implements the plan, validates autonomously, updates documentation, and commits.
+Claude implements the plan, validates autonomously, runs a PM review, updates documentation, and commits.
+
+**PM review after tests pass:**
+```
+/review-milestone
+```
+Invoked automatically inside `/execute-milestone`. Also available standalone. Uses Opus (will ask if you're on a different model). High-conviction issues are fixed autonomously and documented. Low-conviction issues are batched to you before any action.
 
 ---
 
 ## The methodology in one paragraph
 
-Projects are built milestone by milestone. Each milestone has a planning phase (`/plan-milestone`) producing a decision-complete `PLAN-M{n}.md`, and an execution phase (`/execute-milestone`) that implements, validates, updates documentation, and commits — all in one atomic unit. The milestone is not done until tests pass, a live run completes, and docs are updated. A `LEARNINGS.md` file accumulates hard-won lessons across sessions. `ARCHITECTURE.md` tracks the stable system truth. `DESIGN.md` captures product logic. `CLAUDE.md` governs AI behavior. Nothing is implicit.
+Projects are built milestone by milestone. Each milestone has a planning phase (`/plan-milestone`) producing a decision-complete `PLAN-M{n}.md`, and an execution phase (`/execute-milestone`) that implements, validates, runs a PM review, updates documentation, and commits — all in one atomic unit. The milestone is not done until tests pass, a live run completes, the PM review shows PASS, and docs are updated. `/review-milestone` runs after tests — it applies a commercial/UX lens using Opus: high-conviction issues are fixed autonomously with documentation; low-conviction issues are batched to the project owner before acting. A `LEARNINGS.md` file accumulates hard-won lessons across sessions. `ARCHITECTURE.md` tracks the stable system truth. `DESIGN.md` captures product logic. `CLAUDE.md` governs AI behavior. Nothing is implicit.
 
 ---
 
@@ -85,6 +93,7 @@ Every project built with this methodology inherits these defaults (non-negotiabl
 8. **Free steps before paid steps.** Cache before API. Keyword filter before AI call.
 9. **`LEARNINGS.md` grows every session.** Never let a lesson go undocumented.
 10. **Commit immediately after every meaningful change.** Sync scripts can wipe stash.
+11. **PM Review is a hard gate after every milestone.** `/review-milestone` runs after tests pass. High-conviction issues are fixed autonomously with full documentation. Low-conviction issues are batched to the project owner before acting. A milestone is not done until PM review shows PASS.
 
 ---
 

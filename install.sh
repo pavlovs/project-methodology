@@ -22,7 +22,7 @@ echo ""
 mkdir -p "$COMMANDS_DIR" "$CACHE_DIR"
 
 # ── 2. Skill files ────────────────────────────────────────────────────────────
-for skill in new-project plan-milestone execute-milestone audit-security write-tests; do
+for skill in new-project plan-milestone execute-milestone review-milestone audit-security write-tests; do
   tmp="${COMMANDS_DIR}/${skill}.md.tmp"
   http_code=$(curl -sL --max-time 15 --max-redirs 3 -w "%{http_code}" -o "$tmp" "${BASE_URL}/commands/${skill}.md" 2>/dev/null)
   if [ "$http_code" != "200" ] || [ "$(wc -c < "$tmp")" -lt 200 ]; then
@@ -45,7 +45,7 @@ chmod +x "${CLAUDE_DIR}/update-skills.sh"
 echo "  [ok] update-skills.sh"
 
 # ── 4. Seed ETag cache (skip first-run re-download) ──────────────────────────
-for skill in new-project plan-milestone execute-milestone audit-security write-tests; do
+for skill in new-project plan-milestone execute-milestone review-milestone audit-security write-tests; do
   etag=$(curl -sI "${BASE_URL}/commands/${skill}.md" 2>/dev/null \
     | grep -i '^etag:' | sed 's/[Ee][Tt][Aa][Gg]: //;s/"//g' | tr -d '[:space:]')
   [ -n "$etag" ] && echo "$etag" > "${CACHE_DIR}/${skill}.etag"
@@ -109,7 +109,10 @@ echo ""
 echo "Done. Available commands in Claude Code:"
 echo "  /new-project        scaffold a new project"
 echo "  /plan-milestone     plan a milestone (research → decision-complete doc)"
-echo "  /execute-milestone  execute an approved plan"
+echo "  /execute-milestone  execute an approved plan (9 steps, includes PM review gate)"
+echo "  /review-milestone   PM review after tests pass (Opus, two-tier verdict)"
+echo "  /audit-security     OWASP top 10 review with fix protocol"
+echo "  /write-tests        generate tests aligned with project patterns"
 echo ""
 echo "Skills auto-update daily in the background (Stop hook + ETag check)."
 echo "To update manually: bash ~/.claude/update-skills.sh"

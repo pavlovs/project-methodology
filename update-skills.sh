@@ -35,7 +35,7 @@ fi
 updated=0
 errors=0
 
-for skill in new-project plan-milestone execute-milestone audit-security write-tests; do
+for skill in new-project plan-milestone execute-milestone review-milestone audit-security write-tests; do
   local_file="$SKILLS_DIR/${skill}.md"
   etag_file="$CACHE_DIR/${skill}.etag"
 
