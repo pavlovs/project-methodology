@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.1.0
+
+- **Learnings feedback loop**: `/upload-learnings` skill — extract project learnings, classify (universal/stack-specific/project-specific), present for review, write approved items back to methodology templates. Includes automatic version bumping.
+- **Methodology review**: `/review-methodology` skill — periodic cross-project review of all accumulated learnings and feedback to improve templates. Produces consolidated review with approval workflow.
+- **Local methodology repo**: `/new-project` now copies from local `project-methodology/` folder first (GitHub fallback). Projects feed learnings back into templates via `/upload-learnings`, creating a closed improvement loop.
+
 ## v3.0.0
 
 - **Cross-model PM review**: `/review-milestone` can now dispatch to an external model (OpenAI) for independent perspective. Falls back to Opus if no API key configured.
