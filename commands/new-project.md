@@ -15,21 +15,28 @@ Ask the user these questions **all at once**:
 
 Do not proceed until you have answers.
 
-## Step 2 — Fetch template files
+## Step 2 — Copy template files from local methodology repo
 
-Run the following in the project root to pull the standard templates from GitHub:
+Copy templates from the local project-methodology folder (kept in CLAUDE_COWORK):
 
 ```bash
+METHODOLOGY_DIR="$HOME/Documents/CLAUDE_COWORK/project-methodology/templates"
 mkdir -p ai
-curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/CLAUDE.md > CLAUDE.md
-curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/PLAN.md > ai/PLAN.md
-curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/ARCHITECTURE.md > ai/ARCHITECTURE.md
-curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/DESIGN.md > ai/DESIGN.md
-curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/LEARNINGS.md > ai/LEARNINGS.md
-curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/ROADMAP.md > ai/ROADMAP.md
+cp "$METHODOLOGY_DIR/CLAUDE.md" CLAUDE.md
+cp "$METHODOLOGY_DIR/ai/PLAN.md" ai/PLAN.md
+cp "$METHODOLOGY_DIR/ai/ARCHITECTURE.md" ai/ARCHITECTURE.md
+cp "$METHODOLOGY_DIR/ai/DESIGN.md" ai/DESIGN.md
+cp "$METHODOLOGY_DIR/ai/LEARNINGS.md" ai/LEARNINGS.md
+cp "$METHODOLOGY_DIR/ai/ROADMAP.md" ai/ROADMAP.md
 ```
 
-Verify all 7 files exist and are non-empty before proceeding.
+If the local methodology folder doesn't exist, fall back to GitHub:
+```bash
+curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/CLAUDE.md > CLAUDE.md
+# ... (same for all other files)
+```
+
+Verify all 6 files exist and are non-empty before proceeding.
 
 ## Step 3 — Customize every file
 
@@ -69,7 +76,23 @@ Immediately plan the infrastructure milestone:
 
 Use `/plan-milestone` for the full planning protocol.
 
-## Step 6 — Set up formatting hook
+## Step 6 — Create project agents
+
+Create `.claude/agents/` in the project root with two standard agents:
+
+**`analyst.md`** — read-only diagnostic agent (Haiku, `memory: project`). Use for: status checks, data quality audits, schema questions, pipeline diagnostics. Never writes or modifies files. With `memory: project`, it accumulates project-specific knowledge across sessions (schema quirks, known edge cases, data patterns) — replacing manual LEARNINGS.md updates for operational detail.
+
+**`executor.md`** — execution agent (Sonnet). Use for: running pipeline operations, applying data fixes, executing steps defined in PLAN-M{n}.md. Pre-execution checklist: read the plan, verify before-state, execute, verify after-state.
+
+Both agents should read `ai/ARCHITECTURE.md` and `ai/LEARNINGS.md` at the start of their tasks.
+
+Add a third agent if the project has external-facing output:
+
+**`drafter.md`** — drafting agent (Opus). Use for: client-facing documents, reports, investor output. Loads brand-voice.md before drafting.
+
+Commit the agents with the initial project scaffold.
+
+## Step 7 — Set up formatting hook
 
 Recommend the user configure a PostToolUse hook to auto-format code after every file write. This catches the last 10% of formatting issues before CI does. Ask what language/formatter applies:
 

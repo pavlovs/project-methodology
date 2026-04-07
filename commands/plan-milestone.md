@@ -1,6 +1,13 @@
+---
+permissionMode: plan
+---
+
 # /plan-milestone
 
+> **Model note:** Switch to Opus before running: `/model opus`. Switch back to Sonnet after the plan is approved and before execution.
+
 You are entering **milestone planning mode**. Follow this protocol exactly. Do not skip steps.
+The only file you should write is `ai/PLAN-M{n}.md`. Do not touch implementation files during planning.
 
 ## Context (pre-computed at invocation)
 
@@ -89,6 +96,16 @@ The user is always glad to hear about better engineering opportunities. Never pa
 ## Step 6 — Validate the plan against LEARNINGS.md
 
 Re-read `ai/LEARNINGS.md`. For each lesson, verify your plan doesn't violate it. If it does, fix the plan.
+
+## Step 6b — Stakeholder name verification
+
+Scan the milestone spec in ROADMAP.md and your draft PLAN-M{n}.md for every proper name (person, organisation, named system). For each name found:
+
+1. Verify it appears in at least one of: `project-brief.md`, `CLAUDE.md`, `glossary.md`, `deals.md` — within the **current project's folder**, not another project in the workspace.
+2. If it cannot be sourced: replace with a role description ("lead investor", "co-founder", "IC member") and flag the substitution in a comment.
+3. Never pattern-match to "plausible stakeholder names" from training data. If uncertain, ask.
+
+**Why this step exists**: In DR-M1 planning, "Felix aligned" was hallucinated into ROADMAP.md as a checklist item by bleeding the name Felix Jander (from `Consulting/OHS/ohs-knowledge.md`, a different project) into DEALROOM planning. It survived 6 milestones undetected because no prior session questioned names in ROADMAP.md. This step prevents recurrence.
 
 ## Step 7 — Present for signoff
 
