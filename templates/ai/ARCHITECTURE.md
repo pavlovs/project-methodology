@@ -50,6 +50,17 @@
 
 ---
 
+## Data Sources
+
+{Populated during project setup from Step 1b answers. Describes what enters the system and where it comes from.}
+
+| Source | Format | Volume | Update frequency | Notes |
+|--------|--------|--------|-----------------|-------|
+| {source 1} | {CSV/API/DB/manual} | {records/day or total} | {once/daily/realtime} | {access method, auth, known quirks} |
+| {source 2} | {format} | {volume} | {frequency} | {notes} |
+
+---
+
 ## Data Model
 
 ### Primary state store (`data/primary.db`)
@@ -126,3 +137,12 @@ Key decisions:
   "export": {}
 }
 ```
+
+---
+
+## Comparable Projects
+
+{Added during milestone execution (Step 7b). 1-2 open-source projects in the same domain for reference.}
+
+| Project | What's similar | Key difference | Link |
+|---------|---------------|----------------|------|

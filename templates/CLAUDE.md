@@ -105,3 +105,5 @@ A milestone is NOT complete until:
 5. PM Review section in `PLAN-M{n}.md` shows PASS (original or post-amendment)
 6. If schema, output format, or prompt changed: docs updated in same commit
 7. One commit per milestone — no batch commits
+
+<!-- project-methodology v{version} -->

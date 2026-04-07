@@ -11,6 +11,22 @@ Use this file for:
 
 ---
 
+## Domain Knowledge
+
+{Populated during project setup from Step 1b answers. Key domain concepts, industry terminology, regulatory requirements, and business rules that are not obvious from reading the code. This section is the bridge between the user's expertise and the system's logic.}
+
+### Glossary
+
+| Term | Definition |
+|------|-----------|
+| {term} | {definition} |
+
+### Industry standards and constraints
+
+{Regulatory requirements, compliance rules, data format standards, or domain conventions that the system must respect.}
+
+---
+
 ## What We Are Looking For
 
 {Define the ideal "hit" for this project. What does a positive result look like?

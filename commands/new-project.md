@@ -3,7 +3,7 @@
 Scaffold a new software project using the proven architecture from the ALLEX pipeline (Repuro, 2026).
 Designed for Claude-assisted development: full documentation, milestone-based execution, growing learnings system.
 
-## Step 1 — Understand the project
+## Step 1a — Understand the project
 
 Ask the user these questions **all at once**:
 
@@ -14,6 +14,18 @@ Ask the user these questions **all at once**:
 5. **Who runs it** — just the owner, a team, end users?
 
 Do not proceed until you have answers.
+
+## Step 1b — Understand the domain and data
+
+After receiving Step 1a answers, ask these questions **all at once**:
+
+1. **Data sources** — What data enters the system? Where does it come from? (files, APIs, databases, user input, scraping). Be specific: file formats, API endpoints, database types, update frequency.
+2. **Data structure** — What does a single record/entity look like? What are the key fields? What uniquely identifies a record? What relationships exist between entities?
+3. **Data volume and lifecycle** — How much data at day 1? At month 6? Is data append-only, mutable, or versioned? What gets archived vs deleted?
+4. **Domain expertise** — What domain knowledge is needed to build this correctly? Are there industry standards, regulatory requirements, or domain-specific terminology the AI must understand? Where does that knowledge live (docs, the user's head, external references)?
+5. **Existing systems** — Does this replace or integrate with existing tools? What are the interfaces? Are there data migration requirements?
+
+**Do not proceed to template customization until you have data structure answers.** These answers directly inform `ai/ARCHITECTURE.md` (Data Sources + Data Model sections) and `ai/DESIGN.md` (Domain Knowledge + classification logic).
 
 ## Step 2 — Copy template files from local methodology repo
 
@@ -38,6 +50,11 @@ curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/temp
 
 Verify all 6 files exist and are non-empty before proceeding.
 
+After copying, stamp the methodology version into the project's `CLAUDE.md`:
+- Read the version from `~/.claude/.skill-cache/methodology-version` (written by install.sh)
+- Replace `{version}` in the `<!-- project-methodology v{version} -->` footer with the actual version
+- If the version file doesn't exist, stamp `unknown`
+
 ## Step 3 — Customize every file
 
 Replace all `{placeholders}` with real project content. Do not leave template text verbatim.
@@ -46,8 +63,8 @@ Replace all `{placeholders}` with real project content. Do not leave template te
 |------|----------------|
 | `CLAUDE.md` | Project name, stack, CLI commands, non-negotiable decisions, key file paths |
 | `ai/PLAN.md` | Vision, project goal, first 3–5 milestones in the table, initial current state block |
-| `ai/ARCHITECTURE.md` | Data flow diagram, module responsibilities, DB schema, key invariants |
-| `ai/DESIGN.md` | What the system looks for, classification rules, filter logic, output schema, AI prompt design |
+| `ai/ARCHITECTURE.md` | Data flow diagram, module responsibilities, DB schema, key invariants. **Use the data structure answers from Step 1b** to populate the Data Sources table and Data Model section with the real schema — do not leave the template's generic placeholders |
+| `ai/DESIGN.md` | What the system looks for, classification rules, filter logic, output schema, AI prompt design. **Use the domain expertise answers from Step 1b** to populate the Domain Knowledge section and glossary |
 | `ai/LEARNINGS.md` | Scope ladder is pre-filled; add any known platform/stack-specific lessons |
 
 **What goes where (decision tree):**

@@ -7,7 +7,14 @@ SKILLS_DIR="$HOME/.claude/commands"
 CACHE_DIR="$HOME/.claude/.skill-cache"
 LOG="$CACHE_DIR/update.log"
 REPO="pavlovs/project-methodology"
-BASE_URL="https://raw.githubusercontent.com/${REPO}/main/commands"
+
+# Use installed version tag if available, fall back to main
+INSTALLED_VERSION=$(cat "$CACHE_DIR/methodology-version" 2>/dev/null)
+if [ -n "$INSTALLED_VERSION" ]; then
+  BASE_URL="https://raw.githubusercontent.com/${REPO}/v${INSTALLED_VERSION}/commands"
+else
+  BASE_URL="https://raw.githubusercontent.com/${REPO}/main/commands"
+fi
 
 # Minimum acceptable file size (bytes) — guards against empty/error responses
 MIN_BYTES=200
@@ -85,6 +92,18 @@ for skill in new-project plan-milestone execute-milestone review-milestone audit
   echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] UPDATED ${skill} (${actual_bytes} bytes)" >> "$LOG"
   updated=$((updated + 1))
 done
+
+# ── Check for major version bump ─────────────────────────────────────────────
+if [ -n "$INSTALLED_VERSION" ]; then
+  remote_version=$(curl -sL --max-time 5 "https://raw.githubusercontent.com/${REPO}/main/VERSION" 2>/dev/null | tr -d '[:space:]')
+  if [ -n "$remote_version" ] && [ "$remote_version" != "$INSTALLED_VERSION" ]; then
+    local_major=$(echo "$INSTALLED_VERSION" | cut -d. -f1)
+    remote_major=$(echo "$remote_version" | cut -d. -f1)
+    if [ "$remote_major" != "$local_major" ]; then
+      echo "[skills] Major version update available: v${INSTALLED_VERSION} → v${remote_version}. Run install.sh to upgrade." | tee -a "$LOG"
+    fi
+  fi
+fi
 
 [ $updated -gt 0 ] && echo "[skills] $updated skill(s) updated from github.com/${REPO}"
 [ $errors -gt 0 ] && echo "[skills] $errors update(s) skipped — see $LOG"

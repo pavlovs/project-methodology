@@ -8,29 +8,92 @@ Determine which milestone is under review:
 - If invoked from `/execute-milestone`: the milestone currently being executed
 - If invoked standalone: find the latest `ai/PLAN-M*.md` file. If multiple candidates exist (e.g. two files with no PM Review section), ask the project owner which one to review before proceeding
 
-## Step 2 — Spawn Opus sub-agent for the review
+## Step 2 — Select review model
 
-Do not run the PM review yourself on the current model. Always spawn a dedicated Opus sub-agent for this step.
-
-Collect the following before spawning:
+Collect the following before proceeding:
 - Full path to `ai/PLAN-M{n}.md` (the active milestone)
 - Full path to `ai/DESIGN.md` (skip if not present)
 - Full path to `CLAUDE.md`
 - Full path to `ai/PLAN.md`
 - Current working directory
 
-Then spawn the sub-agent with:
+### Step 2a — Check for external review capability
+
+Check in order:
+1. Is `OPENAI_API_KEY` set in the environment?
+2. Is `codex` CLI available (`command -v codex`)?
+
+If **either is available**: proceed to Step 2b (external model review).
+If **neither is available**: fall back to Step 2e (Opus sub-agent, same as v2).
+
+### Step 2b — Prepare review context (external model path)
+
+Read all four files and concatenate into a single review prompt. Use this structure:
+
+```
+You are a senior product manager and commercial decision-maker reviewing a software milestone.
+Review from a user and business perspective — not code quality.
+
+=== MILESTONE PLAN AND VALIDATION RESULTS ===
+{full content of ai/PLAN-M{n}.md}
+
+=== PRODUCT DESIGN ===
+{full content of ai/DESIGN.md, or "No DESIGN.md present — note this gap"}
+
+=== PROJECT CONSTRAINTS ===
+{full content of CLAUDE.md — truncate to first 100 lines if longer}
+
+=== PROJECT VISION ===
+{Summary and milestone table from ai/PLAN.md — not the full file}
+
+=== REVIEW INSTRUCTIONS ===
+{Copy the PM Review instructions section below (Steps 3–6) verbatim}
+
+Output your review in the exact format specified in the instructions.
+```
+
+Write this to a temporary file (e.g., `/tmp/pm-review-prompt.txt`).
+
+### Step 2c — Call external model
+
+Run the external review script:
+```bash
+bash ~/.claude/scripts/external-review.sh /tmp/pm-review-prompt.txt
+```
+
+The script reads `OPENAI_API_KEY` and `EXTERNAL_REVIEW_MODEL` (default: `o3`) from the environment. It returns the model's response as text, or exits non-zero on failure.
+
+If the script fails (non-zero exit): log the error and fall back to Step 2e (Opus sub-agent).
+
+### Step 2d — Parse response and write PM Review block
+
+Read the external model's response. Extract:
+- Required changes section
+- Clarify with project owner section
+- Verdict (PASS or CONDITIONAL PASS)
+
+Write the `## PM Review` block to `ai/PLAN-M{n}.md` using the format specified in the PM Review instructions below. Set the `Model:` line to the actual model used (e.g., `Model: o3 (OpenAI, external review)`).
+
+If the response doesn't follow the expected format: extract what you can, note formatting issues in the review block, and proceed.
+
+Then proceed to Step 3 to execute the verdict.
+
+### Step 2e — Opus sub-agent fallback
+
+If no external model is configured, or the external call failed:
+
+Spawn a dedicated Opus sub-agent:
 - `subagent_type`: `general-purpose`
 - `model`: `opus`
 - Prompt: pass the full PM review instructions below (Steps 3–6) along with the file paths
 
-The sub-agent reads the files, performs the review, writes the `## PM Review` block to `ai/PLAN-M{n}.md`, and returns its verdict and a summary of findings.
+The sub-agent reads the files, performs the review, writes the `## PM Review` block to `ai/PLAN-M{n}.md` with `Model: claude-opus-4-6 (fallback — no external model configured)`, and returns its verdict.
 
-Once the sub-agent returns: read its output, then proceed to Step 7 to execute the verdict. The calling session (Sonnet) handles all code execution — the Opus sub-agent only reads, reasons, and writes the review block.
+Once the sub-agent returns: read its output, then proceed to Step 3 to execute the verdict.
 
 ---
 
-## PM Review instructions (for the Opus sub-agent)
+## PM Review instructions (for the reviewer — external model or Opus sub-agent)
 
 ### Load context
 
@@ -90,7 +153,7 @@ Append a `## PM Review` section to `ai/PLAN-M{n}.md`. Do not skip this even on a
 ```
 ## PM Review
 Reviewed: {date}
-Model: claude-opus-4-6
+Model: {model_used}
 
 ### Required changes (high conviction — autonomous)
 {numbered list, or "None"}
@@ -117,7 +180,7 @@ Return to the calling session: state the verdict, list all findings by tier, and
 
 ## Step 3 — Execute by verdict
 
-Once the sub-agent returns its verdict, the calling session takes over.
+Once the reviewer returns its verdict, the calling session takes over.
 
 **PASS** (both lists empty): report clean pass. Return control to the `/execute-milestone` flow.
 
@@ -128,7 +191,7 @@ _REQUIRED changes — autonomous execution (calling session):_
 2. Execute each step with the same rigor as regular milestone execution
 3. Re-run full verification: `pytest tests/` + live CLI run
 4. Add a `### PM Amendment Results` section to `ai/PLAN-M{n}.md` with exact commands and outputs
-5. Spawn the Opus sub-agent again for a re-review (one re-review cycle maximum)
+5. Re-run the review using the same model path as the initial review (one re-review cycle maximum)
 6. If clean on re-review: update the `### Verdict` line to PASS and return to the `/execute-milestone` flow
 7. If REQUIRED issues still exist after one cycle: stop, surface all remaining issues to the project owner. Do not commit.
 

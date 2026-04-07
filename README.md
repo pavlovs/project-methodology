@@ -1,5 +1,7 @@
 # project-methodology
 
+**Current version: 3.0.0**
+
 A reusable Claude Code skill set for building structured software projects with AI assistance.
 
 Derived from the ALLEX pipeline build (Repuro, March 2026). Combines patterns from [ljw1004/oneplay](https://github.com/ljw1004/oneplay) with lessons learned building a production AI-powered lead generation pipeline.
@@ -79,6 +81,22 @@ Projects are built milestone by milestone. Each milestone has a planning phase (
 
 ---
 
+## Cross-model PM review (optional)
+
+By default, `/review-milestone` uses a Claude Opus sub-agent. To get an independent perspective from a non-Claude model, set these environment variables:
+
+```bash
+export OPENAI_API_KEY="sk-..."                    # required
+export EXTERNAL_REVIEW_MODEL="o3"                 # optional, default: o3
+```
+
+When configured, the PM review calls the OpenAI API directly via `scripts/external-review.sh`. If the API call fails or the key is not set, it falls back to Opus automatically.
+
+**Requirements:** `curl` and `jq` must be installed.
+**Cost:** approximately $0.05–0.50 per review depending on model and context size.
+
+---
+
 ## Architecture principles
 
 Every project built with this methodology inherits these defaults (non-negotiable):
@@ -120,3 +138,9 @@ project-root/
 - [ljw1004/oneplay](https://github.com/ljw1004/oneplay) — `AGENTS.md` + `LEARNINGS.md` + milestone planning protocol
 - ALLEX (Repuro lead pipeline) — production lessons from a 15-milestone AI-assisted build
 - Boris Cherney (Claude Code) — inline bash context injection, pre-defined verification, PostToolUse formatting hooks
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for full version history.

@@ -81,12 +81,28 @@ Only proceed to Step 7 once the PM review verdict is PASS (either originally or 
 
 ## Step 7 — Better engineering phase
 
-After verification passes, do the following before committing:
+After verification passes, do the following before committing. **Order matters** — data structure correctness is more important than code style.
 
-**(a) Run code simplifier**
+**(a) Data structure and architecture review**
+Before any other improvement, check that the implementation matches the documented architecture:
+- Re-read the Data Sources and Data Model sections of `ai/ARCHITECTURE.md`
+- Check: does the schema built in this milestone match the data model documented? Are there fields in the code not in the architecture doc, or vice versa?
+- Check: are there new relationships or entities discovered during implementation that need to be added to the data model?
+- Check: is the data flow still linear, or did this milestone introduce branching/async that needs documentation?
+- If any mismatch exists, fix `ai/ARCHITECTURE.md` now. Data structure errors compound — they are far more expensive to fix later than code style issues.
+
+**(b) Compare to similar projects**
+Skip this step if: this is M1 (infrastructure), or no web search tool is available.
+
+Use web search or context7 MCP to find 1-2 comparable open-source projects in the same domain. Check:
+- Do they use a similar data model? If theirs is significantly different, note why and whether the difference is intentional.
+- Are there common patterns (pagination, caching, rate limiting, error handling) that this project should adopt?
+- Document findings in the `## Comparable Projects` section of `ai/ARCHITECTURE.md` (2-3 lines max per project). This is reference, not prescription — do not blindly copy patterns.
+
+**(c) Run code simplifier**
 Invoke the `/simplify` subagent on the files changed in this milestone. Accept any improvements that don't change external behavior. This runs after verification (code is confirmed working) and before commit (so simplifications are included in the milestone commit).
 
-**(b) Update `ai/LEARNINGS.md`**
+**(d) Update `ai/LEARNINGS.md`**
 Hard limit: **25 lines of content**. This file is loaded into every session — token cost is real.
 
 What belongs here: things not derivable from reading the code, that would cost a developer 30+ minutes to rediscover. One sentence per lesson, plus one sentence fix.
@@ -102,17 +118,19 @@ What does NOT belong here:
 
 At every milestone: **add new lessons AND prune stale ones**. If a lesson is now in the code or architecture docs, delete it here. The file should shrink as the project matures — that is a sign of good engineering, not neglect.
 
-**(c) Update `ai/ARCHITECTURE.md`**
+**(e) Update `ai/ARCHITECTURE.md`**
+Second pass (step (a) caught data structure issues; this pass catches other changes):
 - Reflect any architectural decisions made or changed during this milestone
 - Update invariants if they changed
 - Remove anything stale
 
-**(d) Update `ai/ROADMAP.md`**
+**(f) Update `ai/ROADMAP.md`**
 - Mark this milestone complete with date
 - Update "Current state" block (5 lines max)
 - Flag any new open issues or deferred items discovered during implementation
 
-**(e) Self-review checklist** — all must be true before committing:
+**(g) Self-review checklist** — all must be true before committing:
+- [ ] Data model in `ARCHITECTURE.md` matches actual schema
 - [ ] Type hints on all new function signatures
 - [ ] No hardcoded values — all constants flow from config/settings
 - [ ] `--dry-run` works on all commands that hit external APIs
