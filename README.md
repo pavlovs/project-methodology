@@ -1,6 +1,6 @@
 # project-methodology
 
-**Current version: 3.0.0**
+**Current version: 3.1.0**
 
 A reusable Claude Code skill set for building structured software projects with AI assistance.
 
@@ -10,7 +10,7 @@ Derived from the ALLEX pipeline build (Repuro, March 2026). Combines patterns fr
 
 ## What this is
 
-Six Claude Code slash commands — three for the core milestone loop, one for PM quality review, two for code quality:
+Eight Claude Code slash commands — three for the core milestone loop, one for PM quality review, two for code quality, two for methodology improvement:
 
 | Command | When to use |
 |---------|------------|
@@ -20,6 +20,8 @@ Six Claude Code slash commands — three for the core milestone loop, one for PM
 | `/review-milestone` | PM review after tests pass — commercial/UX lens, two-tier verdict (auto-fix vs ask owner) |
 | `/audit-security` | Security review — OWASP top 10 check on changed files or full codebase, with fix protocol |
 | `/write-tests` | Test generation — fills coverage gaps for existing code, follows project test patterns |
+| `/upload-learnings` | After completing a project or major milestone — extracts learnings, classifies them, and pushes approved items to methodology templates |
+| `/review-methodology` | Periodic cross-project review — consolidates learnings and feedback from all projects to improve templates |
 
 Plus a `templates/` directory with the standard project file structure:
 - `CLAUDE.md` — AI instruction file (always loaded)
