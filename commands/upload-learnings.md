@@ -1,8 +1,10 @@
 # /upload-learnings
 
-Extract learnings from a project and stage them for review into the project-methodology templates.
+Extract learnings from a project, present for review, and push approved items to the project-methodology GitHub repo.
 
-**Flow:** Project `ai/LEARNINGS.md` -> diff against methodology template -> present for curation -> approved items written to `project-methodology/templates/ai/LEARNINGS.md`
+**Source of truth:** `github.com/pavlovs/project-methodology` — all changes go there.
+
+**Flow:** Project `ai/LEARNINGS.md` -> diff against GitHub template -> present for curation -> approved items committed and pushed to GitHub
 
 ## Step 1 — Identify the project
 
@@ -16,9 +18,7 @@ If the file doesn't exist, stop and say so.
 
 Read:
 1. **Project learnings**: `<project>/ai/LEARNINGS.md`
-2. **Methodology template**: `CLAUDE_COWORK/project-methodology/templates/ai/LEARNINGS.md`
-
-If the methodology template doesn't exist, stop and tell the user to set up `project-methodology/` first.
+2. **Methodology template** (fetch from GitHub): `curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/LEARNINGS.md`
 
 ## Step 3 — Extract and classify
 
@@ -56,14 +56,18 @@ Present the learnings in a structured table:
 
 Ask: "Which items should I add to the methodology template? Give me the numbers, or say 'all universal' / 'all recommended'."
 
-## Step 5 — Write approved learnings
+## Step 5 — Write approved learnings and push to GitHub
 
-For each approved learning:
-1. Find the right section in `project-methodology/templates/ai/LEARNINGS.md` (Engineering discipline, Data architecture, API and external services, Testing, Windows/platform specifics — or create a new section if none fits)
-2. Append the learning as a bullet point
-3. Generalize the wording if it was project-specific in phrasing (e.g. "DSGVO-Agent rules" -> "reference data that needs human review")
-
-After writing, show the diff of what was added.
+1. Clone the repo to a temp directory: `git clone https://github.com/pavlovs/project-methodology.git /tmp/project-methodology`
+2. For each approved learning:
+   - Find the right section in `templates/ai/LEARNINGS.md` (Engineering discipline, Data architecture, API and external services, Testing, Windows/platform specifics — or create a new section if none fits)
+   - Append the learning as a bullet point
+   - Generalize the wording if it was project-specific in phrasing (e.g. "DSGVO-Agent rules" -> "reference data that needs human review")
+3. Bump the patch version in CHANGELOG.md (e.g. 3.1.0 -> 3.1.1)
+4. Update `~/.claude/.skill-cache/methodology-version` to match
+5. Commit and push to `main`
+6. Clean up the temp clone
+7. Show the diff of what was pushed
 
 ## Step 6 — Also check for feedback that improves other templates
 
@@ -73,13 +77,6 @@ Scan the project's files for patterns that suggest template improvements:
 - `ai/DESIGN.md` — did the project develop a classification or scoring system worth templating?
 
 Present these as **methodology improvement suggestions** (separate from learnings). Do not auto-apply — just list them for the next `/review-methodology` session.
-
-## Step 7 — Version bump
-
-If any template files were changed:
-1. Bump the patch version in `~/.claude/.skill-cache/methodology-version` (e.g. 3.1.0 -> 3.1.1)
-2. Append an entry to `CLAUDE_COWORK/project-methodology/CHANGELOG.md` with what was added/changed
-3. State: "Local methodology updated to v{new_version}. Push to GitHub when ready."
 
 ## Notes
 - Never auto-apply without Roman's approval

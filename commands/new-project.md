@@ -27,25 +27,18 @@ After receiving Step 1a answers, ask these questions **all at once**:
 
 **Do not proceed to template customization until you have data structure answers.** These answers directly inform `ai/ARCHITECTURE.md` (Data Sources + Data Model sections) and `ai/DESIGN.md` (Domain Knowledge + classification logic).
 
-## Step 2 — Copy template files from local methodology repo
+## Step 2 — Fetch template files from GitHub
 
-Copy templates from the local project-methodology folder (kept in CLAUDE_COWORK):
+Pull templates from the project-methodology GitHub repo (source of truth):
 
 ```bash
-METHODOLOGY_DIR="$HOME/Documents/CLAUDE_COWORK/project-methodology/templates"
 mkdir -p ai
-cp "$METHODOLOGY_DIR/CLAUDE.md" CLAUDE.md
-cp "$METHODOLOGY_DIR/ai/PLAN.md" ai/PLAN.md
-cp "$METHODOLOGY_DIR/ai/ARCHITECTURE.md" ai/ARCHITECTURE.md
-cp "$METHODOLOGY_DIR/ai/DESIGN.md" ai/DESIGN.md
-cp "$METHODOLOGY_DIR/ai/LEARNINGS.md" ai/LEARNINGS.md
-cp "$METHODOLOGY_DIR/ai/ROADMAP.md" ai/ROADMAP.md
-```
-
-If the local methodology folder doesn't exist, fall back to GitHub:
-```bash
 curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/CLAUDE.md > CLAUDE.md
-# ... (same for all other files)
+curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/PLAN.md > ai/PLAN.md
+curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/ARCHITECTURE.md > ai/ARCHITECTURE.md
+curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/DESIGN.md > ai/DESIGN.md
+curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/LEARNINGS.md > ai/LEARNINGS.md
+curl -sL https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/ROADMAP.md > ai/ROADMAP.md
 ```
 
 Verify all 6 files exist and are non-empty before proceeding.

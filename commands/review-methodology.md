@@ -2,13 +2,15 @@
 
 Review and maintain the project-methodology templates based on accumulated feedback and learnings from all projects.
 
+**Source of truth:** `github.com/pavlovs/project-methodology` — all changes go there.
+
 **When to use:** Periodically (monthly or after completing a major project) to incorporate lessons learned into the methodology templates.
 
 ## Step 1 — Gather inputs
 
 Read all of these:
 
-1. **Methodology templates**: `CLAUDE_COWORK/project-methodology/templates/` — current state of all template files
+1. **Methodology templates** (fetch from GitHub): `curl -sL` each template from `https://raw.githubusercontent.com/pavlovs/project-methodology/main/templates/ai/LEARNINGS.md` (and other template files as needed)
 2. **Global feedback**: `CLAUDE_COWORK/Claude_Context/feedback.md` — corrections and behavioral patterns that may indicate methodology gaps
 3. **All project learnings**: scan for `CLAUDE_COWORK/*/ai/LEARNINGS.md` — any project with learnings not yet upstreamed
 4. **Memory**: check `MEMORY.md` for methodology-related memories
@@ -50,33 +52,25 @@ Present a structured review:
 |---|----------|---------------------------|
 ```
 
-## Step 4 — Apply approved changes
+## Step 4 — Apply approved changes and push to GitHub
 
 After Roman approves specific items:
-1. Update the relevant template files in `project-methodology/templates/`
-2. Show the diff for each file changed
-3. If a change affects an architectural principle in Step 7 of `/new-project` (the "Architecture principles baked into every project" section), update that section too
+1. Clone the repo: `git clone https://github.com/pavlovs/project-methodology.git /tmp/project-methodology`
+2. Update the relevant template files
+3. If a change affects an architectural principle in `/new-project` (the "Architecture principles baked into every project" section), update `commands/new-project.md` too
+4. Bump the minor version in CHANGELOG.md (e.g. 3.1.0 -> 3.2.0)
+5. Update `~/.claude/.skill-cache/methodology-version` to match
+6. Commit and push to `main`
+7. Clean up the temp clone
+8. Show the diff of what was pushed
 
 ## Step 5 — Record the review
 
-Append a review log entry to `CLAUDE_COWORK/project-methodology/REVIEW_LOG.md`:
-
-```markdown
-## Review — <date>
-- Projects reviewed: <list>
-- Learnings upstreamed: <count>
-- Template files changed: <list>
-- Deferred items: <list with reasons>
-```
-
-Create `REVIEW_LOG.md` if it doesn't exist.
-
-## Step 6 — Version bump
-
-If any template files were changed:
-1. Bump the minor version in `~/.claude/.skill-cache/methodology-version` (e.g. 3.1.0 -> 3.2.0) — minor because methodology reviews are larger changes than single uploads
-2. Update `CLAUDE_COWORK/project-methodology/CHANGELOG.md` with a new version entry
-3. State: "Local methodology updated to v{new_version}. Push to GitHub when ready."
+Include in the commit message or CHANGELOG entry:
+- Projects reviewed
+- Learnings upstreamed (count)
+- Template files changed
+- Deferred items with reasons
 
 ## Notes
 - This is a curation session — quality over quantity. Not every learning belongs in the template.
